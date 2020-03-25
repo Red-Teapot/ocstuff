@@ -23,6 +23,10 @@ function vec3meta:__index(idx)
     return vec3meta[idx]
 end
 
+function vec3meta:__tostring()
+    return 'vec3(' .. self.x .. ', ' .. self.y .. ', ' .. self.z .. ')'
+end
+
 function vec3meta:lengthEuclid()
     return math.sqrt(self.x * self.x + self.y * self.y + self.z * self.z)
 end
