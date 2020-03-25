@@ -112,7 +112,7 @@ function navmeta:look(facing)
     elseif deltaDir == 1 then
         return self:turn(false)
     elseif deltaDir == 2 then
-        return self:turn(false) and self.turn(false)
+        return self:turn(false) and self:turn(false)
     elseif deltaDir == 3 then
         return self:turn(true)
     else
