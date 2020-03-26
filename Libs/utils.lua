@@ -17,7 +17,12 @@ function utils.merge(dst, src)
         local t = type(value)
 
         if t == 'table' then
+            if not dst[key] then
+                dst[key] = {}
+            end
+
             utils.merge(dst[key], value)
+            setmetatable(dst[key], getmetatable(value))
         elseif t == 'nil' then
             -- Do nothing
         else
