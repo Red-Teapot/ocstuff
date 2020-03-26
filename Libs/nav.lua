@@ -49,6 +49,8 @@ function navmeta:dispose()
 end
 
 function navmeta:setPosition(pos)
+    assert(vec3.isVec3(pos), 'invalid position')
+
     self.pos = pos
 end
 
@@ -121,6 +123,8 @@ function navmeta:look(facing)
 end
 
 function navmeta:goRelative(offset, facing, swizzle, obstacleCallback)
+    assert(vec3.isVec3(offset), 'invalid offset')
+
     if not swizzle then
         swizzle = 'xyz'
     end
@@ -159,6 +163,8 @@ function navmeta:goRelative(offset, facing, swizzle, obstacleCallback)
 end
 
 function navmeta:goAbsolute(position, facing, swizzle, obstacleCallback)
+    assert(vec3.isVec3(position), 'invalid position')
+
     return self:goRelative(position - self.pos, facing, swizzle, obstacleCallback)
 end
 
