@@ -3,11 +3,21 @@ local math = require('math')
 local vec3meta = {}
 local vec3 = {}
 
+function vec3meta:__index(idx)
+    return vec3meta[idx]
+end
+
 function vec3meta:__add(other)
+    assert(vec3.isVec3(self), 'vec3 addition to nil')
+    assert(vec3.isVec3(other), 'nil addition to vec3')
+
     return vec3.new(self.x + other.x, self.y + other.y, self.z + other.z)
 end
 
 function vec3meta:__sub(other)
+    assert(vec3.isVec3(self), 'vec3 subtraction from nil')
+    assert(vec3.isVec3(other), 'nil subtraction from vec3')
+
     return vec3.new(self.x - other.x, self.y - other.y, self.z - other.z)
 end
 
@@ -16,11 +26,11 @@ function vec3meta:__unm()
 end
 
 function vec3meta:__eq(other)
-    return self.x == other.x and self.y == other.y and self.z == other.z
-end
-
-function vec3meta:__index(idx)
-    return vec3meta[idx]
+    if not vec3.isVec3(other) then
+        return false
+    else
+        return self.x == other.x and self.y == other.y and self.z == other.z
+    end
 end
 
 function vec3meta:__tostring()
@@ -52,7 +62,13 @@ function vec3.new(x, y, z)
 end
 
 function vec3.from(src)
+    assert(type(src) == 'table', 'cannot create vec3 from '..type(src))
+    
     return vec3.new(src.x, src.y, src.z)
+end
+
+function vec3.isVec3(var)
+    return type(var) == 'table' and getmetatable(var) == vec3meta
 end
 
 return vec3
