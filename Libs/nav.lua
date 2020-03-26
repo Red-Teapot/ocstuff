@@ -143,7 +143,9 @@ function navmeta:goRelative(offset, facing, swizzle, obstacleCallback)
                 moveSide = sides.down
             end
         elseif c == 'x' or c == 'z' then
-            self:look(static.deltaToDirMap[c][sign])
+            if distance > 0 then
+                self:look(static.deltaToDirMap[c][sign])
+            end
 
             moveSide = sides.forward
         else
