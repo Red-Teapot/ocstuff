@@ -8,7 +8,7 @@ function utils.sign(x)
     elseif x == 0 then
         return 0
     else
-        return 1
+        return -1
     end
 end
 
