@@ -1,6 +1,7 @@
 local vec3 = require('vec3')
 local nav = require('nav')
 local utils = require('utils')
+local computer = require('computer')
 
 local plotlymeta = {}
 local plotly = {}
@@ -46,6 +47,15 @@ function plotlymeta:work()
             local dz = utils.sign(ez - sz)
 
             for z = sz, ez, dz do
+                if computer.energy() < self.energyThreshold then
+                    if self.lowEnergyCallback ~= nil then
+                        self.lowEnergyCallback()
+                    else
+                        self:goHome()
+                        computer.shutdown()
+                    end
+                end
+
                 self:goTo(vec3.new(x, y, z), nil, self.plot.swizzle)
 
                 if self.plotAction then
@@ -70,6 +80,8 @@ function plotly.new(config, pos, facing)
         swizzle = 'xyz',
         plotAction = nil,
         betweenPlotAction = nil,
+        energyThreshold = 2000,
+        lowEnergyCallback = nil,
         
         nav = nil,
         doWork = true,
