@@ -92,8 +92,9 @@ local plotCfg = {
     betweenPlotAction = betweenPlotAction,
 }
 
-nav = navlib.new(plotCfg.home.pos, plotCfg.home.facing)
+nav = navlib.new(plotCfg.home.pos, plotCfg.home.facing, true)
 plotCfg.nav = nav
 plot = plotly.new(plotCfg)
 
+plot:goHome()
 plot:work()
