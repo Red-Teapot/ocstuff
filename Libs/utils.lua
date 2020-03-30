@@ -35,4 +35,9 @@ function utils.pprint(var)
     print(serialization.serialize(var, true))
 end
 
+function utils.rerequire(lib)
+    package.loaded[lib] = nil
+    return require(lib)
+end
+
 return utils
