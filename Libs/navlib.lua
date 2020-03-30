@@ -36,7 +36,7 @@ local static = {
 }
 
 local navmeta = {}
-local nav = {}
+local navlib = {}
 
 function navmeta:__index(idx)
     return navmeta[idx]
@@ -170,7 +170,7 @@ function navmeta:goAbsolute(position, facing, swizzle, obstacleCallback)
     return self:goRelative(position - self.pos, facing, swizzle, obstacleCallback)
 end
 
-function nav.new(position, facing)
+function navlib.new(position, facing)
     local res = {
         pos = vec3.new(0, 0, 0),
         dir = 0,
@@ -194,4 +194,4 @@ function nav.new(position, facing)
     return res
 end
 
-return nav
+return navlib

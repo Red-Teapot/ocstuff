@@ -1,5 +1,5 @@
 local vec3 = require('vec3')
-local nav = require('nav')
+local navlib = require('navlib')
 local utils = require('utils')
 local computer = require('computer')
 
@@ -101,7 +101,7 @@ function plotly.new(config, pos, facing)
     utils.merge(plot, config)
 
     if plot.nav == nil then
-        plot.nav = nav.new(pos, facing)
+        plot.nav = navlib.new(pos, facing)
     end
 
     setmetatable(plot, plotlymeta)
