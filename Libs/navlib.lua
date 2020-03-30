@@ -69,9 +69,7 @@ function navmeta:getFacing()
 end
 
 function navmeta:move(side)
-    if not self.origMove(side) then
-        return false
-    end
+    local oldPos = self.pos
 
     local offset = vec3.new(0, 0, 0)
     if side == sides.up then
@@ -88,29 +86,49 @@ function navmeta:move(side)
         error('Wrong side: '..side)
     end
 
-    self.pos = self.pos + offset
+    local newPos = self.pos + offset
 
+    -- Try to compensate for turning the robot off while moving
     if self.doPersist then
-        self:save()
+        self:save(newPos, self.dir)
     end
+
+    if not self.origMove(side) then
+        -- Cancel the movement
+        if self.doPersist then
+            self:save(oldPos, self.dir)
+        end
+
+        return false
+    end
+
+    self.pos = newPos
 
     return true
 end
 
 function navmeta:turn(clockwise)
+    local oldDir = self.dir
+    local newDir = (self.dir + 1) % 4
+    if clockwise then
+        newDir = (self.dir - 1) % 4
+    end
+
+    -- Try to compensate for turning the robot off while turning
+    if self.doPersist then
+        self:save(self.pos, newDir)
+    end
+
     if not self.origTurn(clockwise) then
+        -- Cancel the turn
+        if self.doPersist then
+            self:save(self.pos, oldDir)
+        end
+
         return false
     end
 
-    if clockwise then
-        self.dir = (self.dir - 1) % 4
-    else
-        self.dir = (self.dir + 1) % 4
-    end
-
-    if self.doPersist then
-        self:save()
-    end
+    self.dir = newDir
 
     return true
 end
@@ -198,14 +216,14 @@ function navmeta:load()
     end
 end
 
-function navmeta:save()
+function navmeta:save(pos, dir)
     local file = io.open(static.persistFile, 'w')
     if not file then return end
 
-    file:write(tostring(self.pos.x)..' ')
-    file:write(tostring(self.pos.y)..' ')
-    file:write(tostring(self.pos.z)..' ')
-    file:write(tostring(self.dir))
+    file:write(tostring(pos.x)..' ')
+    file:write(tostring(pos.y)..' ')
+    file:write(tostring(pos.z)..' ')
+    file:write(tostring(dir))
 
     file:close()
 end
