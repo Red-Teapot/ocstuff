@@ -1,6 +1,7 @@
 local math = require('math')
 local component = require('component')
 local sides = require('sides')
+local fs = require('filesystem')
 
 local vec3 = require('vec3')
 
@@ -33,6 +34,7 @@ local static = {
             [1] = sides.posz,
         },
     },
+    persistFile = '/opt/redteapot-navlib.dat',
 }
 
 local navmeta = {}
@@ -88,6 +90,10 @@ function navmeta:move(side)
 
     self.pos = self.pos + offset
 
+    if self.doPersist then
+        self:save()
+    end
+
     return true
 end
 
@@ -100,6 +106,10 @@ function navmeta:turn(clockwise)
         self.dir = (self.dir - 1) % 4
     else
         self.dir = (self.dir + 1) % 4
+    end
+
+    if self.doPersist then
+        self:save()
     end
 
     return true
@@ -170,15 +180,50 @@ function navmeta:goAbsolute(position, facing, swizzle, obstacleCallback)
     return self:goRelative(position - self.pos, facing, swizzle, obstacleCallback)
 end
 
-function navlib.new(position, facing)
+function navmeta:load()
+    if fs.exists(static.persistFile) then
+        local file = io.open(static.persistFile, 'r')
+        if not file then return end
+
+        local x = file:read("*n")
+        local y = file:read("*n")
+        local z = file:read("*n")
+        local d = file:read("*n")
+        if x ~= nil and y ~= nil and z ~= nil and d ~= nil then
+            self.pos = vec3.new(x, y, z)
+            self.dir = d
+        end
+
+        file:close()
+    end
+end
+
+function navmeta:save()
+    local file = io.open(static.persistFile, 'w')
+    if not file then return end
+
+    file:write(tostring(self.pos.x)..' ')
+    file:write(tostring(self.pos.y)..' ')
+    file:write(tostring(self.pos.z)..' ')
+    file:write(tostring(self.dir))
+
+    file:close()
+end
+
+function navlib.new(position, facing, doPersist)
     local res = {
         pos = vec3.new(0, 0, 0),
         dir = 0,
         origMove = component.robot.move,
         origTurn = component.robot.turn,
+        doPersist = doPersist,
     }
 
     setmetatable(res, navmeta)
+
+    if doPersist then
+        fs.makeDirectory(fs.path(static.persistFile))
+    end
 
     if position ~= nil then res:setPosition(position) end
     if facing ~= nil then res:setFacing(facing) end
@@ -190,6 +235,8 @@ function navlib.new(position, facing)
     component.robot.turn = function(clockwise)
         return res:turn(clockwise)
     end
+
+    res:load()
 
     return res
 end
