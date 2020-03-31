@@ -21,6 +21,20 @@ function vec3meta:__sub(other)
     return vec3.new(self.x - other.x, self.y - other.y, self.z - other.z)
 end
 
+function vec3meta:__mul(other)
+    assert(vec3.isVec3(self), 'multiplication of nil')
+    assert(type(other) == 'number', 'can multiply vec3 only by a number')
+
+    return vec3.new(self.x * other, self.y * other, self.z * other)
+end
+
+function vec3meta:__div(other)
+    assert(vec3.isVec3(self), 'division of nil')
+    assert(type(other) == 'number', 'can divide vec3 only by a number')
+
+    return vec3.new(self.x / other, self.y / other, self.z / other)
+end
+
 function vec3meta:__unm()
     return vec3.new(-self.x, -self.y, -self.z)
 end
@@ -43,6 +57,13 @@ end
 
 function vec3meta:lengthManhattan()
     return math.abs(self.x) + math.abs(self.y) + math.abs(self.z)
+end
+
+function vec3meta:dot(other)
+    assert(vec3.isVec3(self), 'dot product of self=nil')
+    assert(vec3.isVec3(other), 'dot product of other=nil')
+
+    return self.x * other.x + self.y * other.y + self.z * other.z
 end
 
 function vec3meta:unpack()
