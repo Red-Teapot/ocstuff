@@ -1,42 +1,41 @@
-local cfg = {
-    x = 18,
-    y = 255,
-    z = 18,
-    signalStrength = 1000000,
-    energyThreshold = 1000,
-    listenPort = 42,
-    chargeDelay = 30,
-}
+local function get(name)
+    return component.proxy(component.list(name)())
+end
 
-local robot = component.proxy(component.list('robot')())
-local modem = component.proxy(component.list('modem')())
+local eeprom = get('eeprom')
+local robot = get('robot')
+local modem = get('modem')
 
-modem.setStrength(cfg.signalStrength)
+-- Read config from EEPROM data section
+local format = '< i8i8i8 I4 I2 I2 f'
+local x, y, z, signalStrength, energyThreshold, listenPort, chargeDelay = string.unpack(format, eeprom.getData())
+
+modem.setStrength(signalStrength)
 modem.setWakeMessage('gps-wakeup')
-modem.broadcast(cfg.listenPort, 'gps-wakeup')
+modem.broadcast(listenPort, 'gps-wakeup')
 
 while true do
-    if computer.energy() > cfg.energyThreshold then
+    if computer.energy() > energyThreshold then
         -- Move up to the world height limit
         if not robot.move(1) then
             break
         end
     else
         -- Wait some time to hopefully charge
-        computer.pullSignal(cfg.chargeDelay)
+        computer.pullSignal(chargeDelay)
     end
 end
 
-modem.open(cfg.listenPort)
+modem.open(listenPort)
 
 local function respond(remoteAddress, responsePort)
     -- Try to handle as much errors as possible to avoid crashing
-    if computer.energy() < cfg.energyThreshold then return end
+    if computer.energy() < energyThreshold then return end
     if type(responsePort) ~= 'number' then return end
     responsePort = math.floor(responsePort)
     if responsePort < 1 or responsePort > 65535 then return end
 
-    modem.send(remoteAddress, responsePort, cfg.x, cfg.y, cfg.z)
+    modem.send(remoteAddress, responsePort, x, y, z)
 end
 
 while true do
