@@ -4,8 +4,6 @@ local math = require('math')
 local os = require('os')
 local vec3 = require('vec3')
 
-local ser = require('serialization')
-
 local modem = component.modem
 
 local cfg = {
@@ -29,6 +27,10 @@ function gpslib.locate(responsePort, timeout, maxTries)
     local responseCount = 0 -- Because tables have no simple way to get item count
 
     local onResponse = function(_, _, remoteAddress, _, distance, satX, satY, satZ)
+        if type(satX) ~= 'number' then return end
+        if type(satY) ~= 'number' then return end
+        if type(satZ) ~= 'number' then return end
+
         if not responses[remoteAddress] then
             responses[remoteAddress] = {
                 distance = distance,
