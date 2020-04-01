@@ -21,7 +21,8 @@ print('Writing config')
 eeprom.setData(string.pack(format, x, y, z, signalStrength, energyThreshold, listenPort, chargeDelay))
 
 print('Writing executable')
-local srcFile = io.open(arg[1], 'r')
+local executable = arg[1] or '../share/gps/satellite.lua'
+local srcFile = io.open(executable, 'r')
 local src = srcFile:read('a')
 srcFile:close()
 
