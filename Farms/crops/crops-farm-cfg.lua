@@ -1,15 +1,15 @@
 return {
     home = {
-        x = 0,
-        y = 0,
-        z = 0,
+        x = 13,
+        y = 56,
+        z = 48,
         facing = 'north',
         swizzle = 'xyz',
     },
     plot = {
-        x = 2,
-        y = 1,
-        z = 2,
+        x = 15,
+        y = 57,
+        z = 50,
         sizeX = 5,
         sizeZ = 5,
         swizzle = 'xyz'
@@ -17,4 +17,6 @@ return {
     dropoffChestSide = 'bottom',
     idleTimeout = 10,
     energyThreshold = 2000,
+    usePersistence = false,
+    useGPS = true,
 }
