@@ -1,7 +1,6 @@
 local math = require('math')
 local component = require('component')
 local sides = require('sides')
-local fs = require('filesystem')
 
 local vec3 = require('vec3')
 
@@ -46,6 +45,27 @@ local state = {
 
 local positiond = {}
 
+function positiond.setPosition(position)
+    assert(vec3.isVec3(position), 'invalid position')
+
+    state.position = position
+end
+
+function positiond.getPosition()
+    return state.position
+end
+
+function positiond.setSide(side)
+    assert(type(side) == 'number', 'invalid side')
+    assert(static.sideToDirMap[side] ~= nil, 'invalid side')
+
+    state.dir = static.sideToDirMap[side]
+end
+
+function positiond.getSide()
+    return static.dirToSideMap[state.dir]
+end
+
 function positiond.move(side)
     if not state.robotMove(side) then
         return false
@@ -89,6 +109,9 @@ function positiond.turn(clockwise)
 end
 
 function positiond.init()
+    state.robotMove = component.robot.move
+    state.robotTurn = component.robot.turn
+
     component.robot.move = positiond.move
     component.robot.turn = positiond.turn
 end
