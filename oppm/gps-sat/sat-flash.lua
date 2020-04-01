@@ -1,6 +1,7 @@
 local component = require('component')
 local shell = require('shell')
 local io = require('io')
+local fs = require('filesystem')
 
 local eeprom = component.eeprom
 
@@ -21,7 +22,12 @@ print('Writing config')
 eeprom.setData(string.pack(format, x, y, z, signalStrength, energyThreshold, listenPort, chargeDelay))
 
 print('Writing executable')
-local executable = arg[1] or '../share/gps/satellite.lua'
+local executable = arg[1]
+if executable == nil then
+    executable = os.getenv('_') -- Should get path to this file
+    executable = fs.path(executable)
+    executable = fs.concat(executable, '../share/gps/satellite.lua')
+end
 local srcFile = io.open(executable, 'r')
 local src = srcFile:read('a')
 srcFile:close()
