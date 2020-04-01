@@ -1,7 +1,32 @@
-local vec3 = require('vec3')
-local navlib = require('navlib')
-local utils = require('utils')
 local computer = require('computer')
+
+local positiond = require('positiond')
+local vec3 = require('vec3')
+
+local function sign(x)
+    if x > 0 then return 1
+    elseif x == 0 then return 0
+    else return -1 end
+end
+
+local function merge(dst, src)
+    for key, value in pairs(src) do
+        local t = type(value)
+
+        if t == 'table' then
+            if not dst[key] then
+                dst[key] = {}
+            end
+
+            merge(dst[key], value)
+            setmetatable(dst[key], getmetatable(value))
+        elseif t == 'nil' then
+            -- Do nothing
+        else
+            dst[key] = value
+        end
+    end
+end
 
 local plotlymeta = {}
 local plotly = {}
@@ -11,7 +36,7 @@ function plotlymeta:__index(idx)
 end
 
 function plotlymeta:goHome()
-    self.nav:goAbsolute(self.home.pos, nil, self.home.swizzle, self.obstacleCallback)
+    positiond.goAbsolute(self.home.pos, nil, self.home.swizzle, self.obstacleCallback)
 end
 
 function plotlymeta:goTo(pos, facing, swizzle)
@@ -19,7 +44,7 @@ function plotlymeta:goTo(pos, facing, swizzle)
         swizzle = self.swizzle
     end
 
-    self.nav:goAbsolute(pos, facing, swizzle, self.obstacleCallback)
+    positiond.goAbsolute(pos, facing, swizzle, self.obstacleCallback)
 end
 
 function plotlymeta:getNav()
@@ -30,11 +55,11 @@ function plotlymeta:work()
     self:goTo(self.plot.pos)
 
     local startX = self.plot.pos.x
-    local endX = startX + self.plot.sizeX - utils.sign(self.plot.sizeX)
-    local dx = utils.sign(endX - startX)
+    local endX = startX + self.plot.sizeX - sign(self.plot.sizeX)
+    local dx = sign(endX - startX)
     local y = self.plot.pos.y
     local startZ = self.plot.pos.z
-    local endZ = startZ + self.plot.sizeZ -  utils.sign(self.plot.sizeZ)
+    local endZ = startZ + self.plot.sizeZ -  sign(self.plot.sizeZ)
 
     while self.doWork do
         for x = startX, endX, dx do
@@ -44,7 +69,7 @@ function plotlymeta:work()
                 sz = endZ
                 ez = startZ
             end
-            local dz = utils.sign(ez - sz)
+            local dz = sign(ez - sz)
 
             for z = sz, ez, dz do
                 if computer.energy() < self.energyThreshold then
@@ -74,7 +99,7 @@ function plotlymeta:stop()
     self.doWork = false
 end
 
-function plotly.new(config, pos, facing)
+function plotly.new(config)
     local plot = {
         obstacleCallback = nil,
         swizzle = 'xyz',
@@ -83,7 +108,6 @@ function plotly.new(config, pos, facing)
         energyThreshold = 2000,
         lowEnergyCallback = nil,
         
-        nav = nil,
         doWork = true,
 
         home = {
@@ -98,11 +122,7 @@ function plotly.new(config, pos, facing)
         },
     }
 
-    utils.merge(plot, config)
-
-    if plot.nav == nil then
-        plot.nav = navlib.new(pos, facing)
-    end
+    merge(plot, config)
 
     setmetatable(plot, plotlymeta)
 
