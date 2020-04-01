@@ -109,11 +109,27 @@ function positiond.turn(clockwise)
 end
 
 function positiond.init()
-    state.robotMove = component.robot.move
-    state.robotTurn = component.robot.turn
+    if state.robotMove == nil then
+        state.robotMove = component.robot.move
+        component.robot.move = positiond.move
+    end
 
-    component.robot.move = positiond.move
-    component.robot.turn = positiond.turn
+    if state.robotTurn == nil then
+        state.robotTurn = component.robot.turn
+        component.robot.turn = positiond.turn
+    end
+end
+
+function positiond.dispose()
+    if state.robotMove ~= nil then
+        component.robot.move = state.robotMove
+        state.robotMove = nil
+    end
+
+    if state.robotTurn ~= nil then
+        component.robot.turn = state.robotTurn
+        state.robotTurn = nil
+    end
 end
 
 function positiond.look(side)

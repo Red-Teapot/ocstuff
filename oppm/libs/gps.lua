@@ -11,9 +11,9 @@ local cfg = {
     defaultResponsePort = 42,
 }
 
-local gpslib = {}
+local gps = {}
 
-function gpslib.locate(responsePort, timeout, maxTries)
+function gps.locate(responsePort, timeout, maxTries)
     if not responsePort then responsePort = cfg.defaultResponsePort end
     if not timeout then timeout = 2 end
     if not maxTries then maxTries = 2 end
@@ -102,4 +102,4 @@ function gpslib.locate(responsePort, timeout, maxTries)
     return pos.x, pos.y, pos.z
 end
 
-return gpslib
+return gps
