@@ -11,9 +11,8 @@ local robot = component.robot
 
 local args = {...}
 
-local configFileName = args[1] or 'crop-farm-cfg'
-package.loaded[configFileName] = nil
-local cfg = require(configFileName)
+local configFileName = args[1] or '/home/crop-farm-cfg.lua'
+local cfg = dofile(configFileName)
 
 local plot = nil
 
