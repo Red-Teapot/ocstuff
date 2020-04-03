@@ -18,6 +18,15 @@ local cfg = dofile(configFileName)
 
 local plot = nil
 
+local suck = function(side)
+    robot.suck(side)
+end
+if component.isAvailable('tractor_beam') then
+    suck = function(_)
+        component.tractor_beam.suck()
+    end
+end
+
 local function obstacleCallback(side)
     robot.swing(side)
 end
@@ -51,19 +60,19 @@ local function cutTree()
         end
 
         robot.swing(sides.up)
-        robot.suck(sides.up)
+        suck(sides.up)
         robot.move(sides.up)
     end
 
     positiond.goAbsolute(initialPos, nil, cfg.plot.swizzle, obstacleCallback)
 
     robot.swing(sides.down)
-    robot.suck(sides.down)
+    suck(sides.down)
     plantTree()
 end
 
 local function plotAction()
-    robot.suck(sides.down)
+    suck(sides.down)
 
     local info = geolyzer.analyze(sides.down)
 
