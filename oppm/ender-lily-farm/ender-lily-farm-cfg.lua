@@ -1,3 +1,4 @@
+-- Example config
 return {
     home = {
         x = 0,

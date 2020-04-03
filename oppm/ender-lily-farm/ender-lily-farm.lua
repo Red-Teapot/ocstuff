@@ -3,8 +3,7 @@ local component = require('component')
 local sides = require('sides')
 local event = require('event')
 -- My libs
-local utils = require('utils')
-local navlib = require('navlib')
+local positiond = require('positiond')
 local plotly = require('plotly')
 local vec3 = require('vec3')
 
@@ -12,9 +11,11 @@ local robot = component.robot
 local inv = component.inventory_controller
 local geolyzer = component.geolyzer
 
-local cfg = utils.rerequire('ender-lily-farm-cfg')
+local args = {...}
 
-local nav = nil
+local configFileName = args[1] or '/home/ender-lily-farm-cfg.lua'
+local cfg = dofile(configFileName)
+
 local plot = nil
 
 local function plantLily()
@@ -47,7 +48,7 @@ local function plotAction()
             plantLily()
         end
     else
-        print('Unexpected block at '..tostring(nav:getPosition())..': '..info.name)
+        print('Unexpected block at '..tostring(positiond.getPosition())..': '..info.name)
     end
 end
 
@@ -55,7 +56,7 @@ local function betweenPlotAction()
     plot:goHome()
     local dropoffSide = sides[cfg.dropoffChestSide]
     if dropoffSide ~= sides.up and dropoffSide ~= sides.down then
-        nav:look(dropoffSide)
+        positiond.look(dropoffSide)
         dropoffSide = sides.forward
     end
 
@@ -92,8 +93,6 @@ local plotCfg = {
     betweenPlotAction = betweenPlotAction,
 }
 
-nav = navlib.new(plotCfg.home.pos, plotCfg.home.facing, true)
-plotCfg.nav = nav
 plot = plotly.new(plotCfg)
 
 plot:goHome()
