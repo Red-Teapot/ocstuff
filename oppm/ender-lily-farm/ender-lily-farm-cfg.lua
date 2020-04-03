@@ -1,18 +1,18 @@
 -- Example config
 return {
     home = {
-        x = 0,
-        y = 0,
-        z = 0,
+        x = 38,
+        y = 57,
+        z = 53,
         facing = 'north',
         swizzle = 'xyz',
     },
     plot = {
-        x = 2,
-        y = 1,
-        z = 2,
-        sizeX = 5,
-        sizeZ = 5,
+        x = 40,
+        y = 57,
+        z = 57,
+        sizeX = 4,
+        sizeZ = 4,
         swizzle = 'xyz'
     },
     dropoffChestSide = 'bottom',
