@@ -4,7 +4,7 @@ local sides = require('sides')
 
 local vec3 = require('vec3')
 
-local static = {
+local maps = {
     dirToOffsetMap = {
         [0] = vec3.new(0, 0, -1),
         [1] = vec3.new(-1, 0, 0),
@@ -33,7 +33,10 @@ local static = {
             [1] = sides.posz,
         },
     },
-    persistFile = '/opt/redteapot-navlib.dat',
+    north = 0,
+    west = 1,
+    south = 2,
+    east = 3,
 }
 
 local state = {
@@ -44,6 +47,10 @@ local state = {
 }
 
 local positiond = {}
+
+function positiond.getMaps()
+    return maps
+end
 
 function positiond.setPosition(position)
     assert(vec3.isVec3(position), 'invalid position')
@@ -57,13 +64,13 @@ end
 
 function positiond.setSide(side)
     assert(type(side) == 'number', 'invalid side')
-    assert(static.sideToDirMap[side] ~= nil, 'invalid side')
+    assert(maps.sideToDirMap[side] ~= nil, 'invalid side')
 
-    state.dir = static.sideToDirMap[side]
+    state.dir = maps.sideToDirMap[side]
 end
 
 function positiond.getSide()
-    return static.dirToSideMap[state.dir]
+    return maps.dirToSideMap[state.dir]
 end
 
 function positiond.move(side)
@@ -77,7 +84,7 @@ function positiond.move(side)
     elseif side == sides.down then
         offset = vec3.new(0, -1, 0)
     elseif side == sides.forward or side == sides.back then
-        offset = static.dirToOffsetMap[state.dir]
+        offset = maps.dirToOffsetMap[state.dir]
 
         if side == sides.back then
             offset = -offset
@@ -133,7 +140,7 @@ function positiond.dispose()
 end
 
 function positiond.look(side)
-    local dir = static.sideToDirMap[side]
+    local dir = maps.sideToDirMap[side]
     local deltaDir = (dir - state.dir) % 4
 
     if deltaDir == 0 then
@@ -171,7 +178,7 @@ function positiond.goRelative(offset, facing, swizzle, obstacleCallback)
             end
         elseif c == 'x' or c == 'z' then
             if distance > 0 then
-                positiond.look(static.deltaToDirMap[c][sign])
+                positiond.look(maps.deltaToDirMap[c][sign])
             end
 
             moveSide = sides.forward
