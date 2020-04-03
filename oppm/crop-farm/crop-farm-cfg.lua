@@ -1,3 +1,4 @@
+-- Example config
 return {
     home = {
         x = 13,
@@ -17,6 +18,4 @@ return {
     dropoffChestSide = 'bottom',
     idleTimeout = 10,
     energyThreshold = 2000,
-    usePersistence = false,
-    useGPS = true,
 }
