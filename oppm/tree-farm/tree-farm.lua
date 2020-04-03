@@ -13,7 +13,7 @@ local geolyzer = component.geolyzer
 
 local args = {...}
 
-local configFileName = args[1] or '/home/ender-lily-farm-cfg.lua'
+local configFileName = args[1] or '/home/tree-farm-cfg.lua'
 local cfg = dofile(configFileName)
 
 local plot = nil
