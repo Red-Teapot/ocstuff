@@ -73,9 +73,11 @@ function start(cfg)
         robot.turn(false)
         turnCount = turnCount + 1
     end
+    
     -- Turn back
-    for _ = 1, turnCount do
-        robot.turn(true)
+    if turnCount == 1 then robot.turn(true)
+    elseif turnCount == 2 then robot.turn(true) robot.turn(true)
+    elseif turnCount == 3 then robot.turn(false)
     end
 
     positiond.setSide(maps.dirToSideMap[direction % 4])
