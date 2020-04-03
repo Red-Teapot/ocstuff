@@ -47,10 +47,6 @@ function plotlymeta:goTo(pos, facing, swizzle)
     positiond.goAbsolute(pos, facing, swizzle, self.obstacleCallback)
 end
 
-function plotlymeta:getNav()
-    return self.nav
-end
-
 function plotlymeta:work()
     self:goTo(self.plot.pos)
 
