@@ -50,10 +50,11 @@ function start(cfg)
 
             if not validate(nx, ny, nz) then break end
 
-            assert(ny == y, 'the robot must move horizontally')
-
             nx = round(nx)
+            ny = round(ny)
             nz = round(nz)
+
+            assert(ny == y, 'the robot must move horizontally')
 
             local ox = nx - x
             local oz = nz - z
@@ -73,7 +74,7 @@ function start(cfg)
         robot.turn(false)
         turnCount = turnCount + 1
     end
-    
+
     -- Turn back
     if turnCount == 1 then robot.turn(true)
     elseif turnCount == 2 then robot.turn(true) robot.turn(true)
