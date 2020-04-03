@@ -78,6 +78,6 @@ function start(cfg)
         robot.turn(true)
     end
 
-    positiond.setSide(maps.dirToSideMap[direction])
+    positiond.setSide(maps.dirToSideMap[direction % 4])
     positiond.setPosition(vec3.new(x, y, z))
 end
