@@ -6,22 +6,18 @@ local vec3 = require('vec3')
 
 local modem = component.modem
 
-local cfg = {
-    satellitePort = 42,
-    defaultResponsePort = 42,
-}
-
 local gps = {}
 
-function gps.locate(responsePort, timeout, maxTries)
-    if not responsePort then responsePort = cfg.defaultResponsePort end
-    if not timeout then timeout = 2 end
-    if not maxTries then maxTries = 2 end
+function gps.locate(responsePort, timeout, maxTries, satellitePort)
+    if not responsePort then responsePort = 42 end
+    if not timeout then timeout = 1 end
+    if not maxTries then maxTries = 5 end
+    if not satellitePort then satellitePort = 42 end
 
     local oldStrength = modem.getStrength()
     modem.setStrength(1000000)
 
-    modem.broadcast(cfg.satellitePort, 'gps-wakeup')
+    modem.broadcast(satellitePort, 'gps-wakeup')
 
     local responses = {}
     local responseCount = 0 -- Because tables have no simple way to get item count
@@ -45,7 +41,7 @@ function gps.locate(responsePort, timeout, maxTries)
     modem.open(responsePort)
 
     for _ = 1, maxTries do
-        modem.broadcast(cfg.satellitePort, responsePort)
+        modem.broadcast(satellitePort, responsePort)
         os.sleep(timeout)
         if responseCount >= 3 then
             break
