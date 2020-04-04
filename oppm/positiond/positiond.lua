@@ -187,10 +187,8 @@ function positiond.goRelative(offset, facing, swizzle, obstacleCallback)
         end
 
         for _ = 1, distance do
-            if obstacleCallback then
-                while component.robot.detect(moveSide) do
-                    obstacleCallback(moveSide)
-                end
+            while component.robot.detect(moveSide) do
+                if obstacleCallback then obstacleCallback(moveSide) end
             end
             positiond.move(moveSide)
         end
