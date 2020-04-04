@@ -60,5 +60,10 @@ local plotCfg = {
 
 plot = plotly.new(plotCfg)
 
+print('Waiting for termination')
+local evt = event.pull(10, 'interrupted')
+if evt then return end
+print('Continuing')
+
 plot:goHome()
 plot:work()
