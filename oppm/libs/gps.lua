@@ -27,7 +27,7 @@ function gps.locate(responsePort, timeout, maxTries, satellitePort)
         if type(satY) ~= 'number' then return end
         if type(satZ) ~= 'number' then return end
 
-        if not responses[remoteAddress] then
+        if not responses[remoteAddress] and satY == 255 then
             responses[remoteAddress] = {
                 distance = distance,
                 x = satX,
